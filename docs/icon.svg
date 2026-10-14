@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 260" width="200" height="260" role="img" aria-label="Lilith mask glyph">
+  <!-- Original vector mark: stylised seven-eyed mask. Not a reproduction of any existing logo or artwork. -->
+  <defs>
+    <linearGradient id="maskFace" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#7c4bb8"/>
+      <stop offset="100%" stop-color="#512d78"/>
+    </linearGradient>
+  </defs>
+
+  <!-- outer mask silhouette: elongated hexagonal shield -->
+  <path d="M100 4
+           L172 48
+           L190 124
+           L148 214
+           L100 256
+           L52 214
+           L10 124
+           L28 48
+           Z"
+        fill="url(#maskFace)" stroke="#2a1640" stroke-width="3"/>
+
+  <!-- inner face plate, slightly inset -->
+  <path d="M100 22
+           L156 56
+           L170 124
+           L136 196
+           L100 232
+           L64 196
+           L30 124
+           L44 56
+           Z"
+        fill="#44275f" stroke="#1c0f2c" stroke-width="2"/>
+
+  <!-- vertical centerline ridge -->
+  <line x1="100" y1="30" x2="100" y2="224" stroke="#2a1640" stroke-width="2" opacity="0.6"/>
+
+  <!-- seven eyes: one on the centerline, three symmetric pairs -->
+  <g stroke="#120a1a" stroke-width="2">
+    <!-- top center eye -->
+    <g>
+      <path d="M100 44 L120 58 L100 72 L80 58 Z" fill="#ece6d6"/>
+      <circle cx="100" cy="58" r="7" fill="#6B3FA0"/>
+      <circle cx="100" cy="58" r="3" fill="#0d0712"/>
+    </g>
+    <!-- upper pair -->
+    <g>
+      <path d="M62 78 L80 90 L62 104 L46 90 Z" fill="#ece6d6"/>
+      <circle cx="62" cy="90" r="6.5" fill="#6B3FA0"/>
+      <circle cx="62" cy="90" r="2.8" fill="#0d0712"/>
+    </g>
+    <g>
+      <path d="M138 78 L154 90 L138 104 L120 90 Z" fill="#ece6d6"/>
+      <circle cx="138" cy="90" r="6.5" fill="#6B3FA0"/>
+      <circle cx="138" cy="90" r="2.8" fill="#0d0712"/>
+    </g>
+    <!-- middle pair -->
+    <g>
+      <path d="M54 122 L72 134 L54 148 L38 134 Z" fill="#ece6d6"/>
+      <circle cx="54" cy="134" r="6.5" fill="#6B3FA0"/>
+      <circle cx="54" cy="134" r="2.8" fill="#0d0712"/>
+    </g>
+    <g>
+      <path d="M146 122 L162 134 L146 148 L130 134 Z" fill="#ece6d6"/>
+      <circle cx="146" cy="134" r="6.5" fill="#6B3FA0"/>
+      <circle cx="146" cy="134" r="2.8" fill="#0d0712"/>
+    </g>
+    <!-- lower pair, flanking the chin -->
+    <g>
+      <path d="M72 166 L88 178 L74 192 L60 178 Z" fill="#ece6d6"/>
+      <circle cx="74" cy="178" r="6" fill="#6B3FA0"/>
+      <circle cx="74" cy="178" r="2.6" fill="#0d0712"/>
+    </g>
+    <g>
+      <path d="M128 166 L140 178 L126 192 L112 178 Z" fill="#ece6d6"/>
+      <circle cx="126" cy="178" r="6" fill="#6B3FA0"/>
+      <circle cx="126" cy="178" r="2.6" fill="#0d0712"/>
+    </g>
+  </g>
+
+  <!-- chin point accent -->
+  <path d="M100 206 L112 220 L100 232 L88 220 Z" fill="#2a1640"/>
+</svg>

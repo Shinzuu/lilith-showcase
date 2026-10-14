@@ -1,0 +1,281 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Set up Lilith with your AI agent</title>
+<meta name="description" content="Paste one prompt into Claude Code and it sets up Lilith: checks your machine, runs the tests, shows the install plan, helps you fill in your sources and clients, and starts the service with polling off.">
+<meta name="author" content="Shinzuu">
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#07070a">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Lilith">
+<meta property="og:title" content="Lilith: what needs me now?">
+<meta property="og:description" content="A local chief-of-staff dashboard built on Claude Code. Six sources, seven rules, one page sorted by client.">
+<meta property="og:url" content="https://shinzuu.github.io/lilith-showcase/agent-setup.html">
+<meta property="og:image" content="https://shinzuu.github.io/lilith-showcase/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Lilith: what needs me now?">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://shinzuu.github.io/lilith-showcase/og.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+Display:wdth,wght@62.5..100,700..900&family=Barlow+Condensed:wght@500;600;700&family=Noto+Sans:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap">
+<style>
+:root{
+  --bg:#07070a; --bg-2:#0d0d11; --panel:#111116; --line:#24242c; --line-2:#3a3a45;
+  --text:#ede8dc; --dim:#b3ac9e; --faint:#8f897c;
+  --orange:#ff6a13; --red:#ff3b4e; --green:#4bff7a; --amber:#ffb000; --purple:#7b4fc0; --purple-2:#a882e6;
+  --title:"Noto Serif Display",Georgia,serif; --label:"Barlow Condensed","Arial Narrow",sans-serif;
+  --ui:"Noto Sans",system-ui,sans-serif; --mono:"Space Mono",ui-monospace,monospace;
+  --ease:cubic-bezier(.16,1,.3,1); --g:16px; color-scheme:dark;
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth;scroll-padding-top:64px;scrollbar-color:var(--line-2) var(--bg)}
+body{margin:0;background:var(--bg);color:var(--text);font:400 1.0625rem/1.65 var(--ui);-webkit-font-smoothing:antialiased}
+::selection{background:var(--orange);color:#120700}
+h1,h2,h3,p,ul,ol,dl,dd,figure{margin:0} ul,ol{padding:0;list-style:none}
+a{color:inherit;text-underline-offset:.22em;text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--orange);outline-offset:3px}
+img{display:block;max-width:100%;height:auto}
+.wrap{width:100%;max-width:78rem;margin-inline:auto;padding-inline:var(--g)}
+@media (min-width:900px){:root{--g:40px}}
+.skip{position:absolute;left:var(--g);top:-4rem;background:var(--orange);color:#120700;padding:.5rem .8rem;z-index:20}.skip:focus{top:.6rem}
+.label{font:600 .8rem/1.2 var(--label);letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+.jp{font-family:"Noto Serif JP",var(--title);letter-spacing:.05em}
+
+/* nav */
+.nav{position:sticky;top:0;z-index:10;background:rgb(7 7 10 / .86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;gap:1rem;min-height:58px}
+.brand{display:flex;align-items:center;gap:.6rem;text-decoration:none;min-height:44px}
+.brand img{width:22px;height:auto}
+.brand b{font:900 1.3rem/1 var(--title);font-stretch:80%;letter-spacing:.04em}
+.nav-links{display:none;margin-left:auto;gap:1.5rem}
+.nav-links a{font:600 .92rem/1 var(--label);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);text-decoration:none}
+.nav-links a:hover{color:var(--text)}
+@media (min-width:860px){.nav-links{display:flex}}
+.btn{display:inline-flex;align-items:center;gap:.6rem;min-height:48px;padding:0 1.2rem;font:700 1rem/1 var(--label);letter-spacing:.12em;text-transform:uppercase;text-decoration:none;border:1px solid var(--line-2);transition:background-color .2s,border-color .2s,transform .3s var(--ease)}
+.btn-sig{background:var(--orange);border-color:var(--orange);color:#120700}
+.btn-sig:hover{background:#ff7d33;transform:translateY(-1px)}
+.btn-ghost:hover{border-color:var(--dim);background:var(--panel)}
+.nav .btn{margin-left:auto;min-height:40px;padding:0 .9rem;font-size:.9rem}
+@media (min-width:860px){.nav .btn{margin-left:1.5rem}}
+
+/* hero */
+.hero{padding-block:clamp(3rem,9vw,6.5rem) 0;position:relative}
+.hero-grid{display:grid;gap:2rem;align-items:end}
+@media (min-width:1000px){.hero-grid{grid-template-columns:1.25fr .75fr;gap:3rem}}
+.hero h1{font:900 clamp(3.1rem,11vw,8.4rem)/.86 var(--title);font-stretch:72%;letter-spacing:-.01em;text-transform:uppercase;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--orange)}
+.hero .tag{display:flex;align-items:center;gap:.8rem;margin-bottom:1.4rem}
+.sync{display:inline-flex;align-items:center;gap:.5rem;border:2px solid var(--green);color:var(--green);padding:.3rem .65rem;font:700 1.05rem/1 var(--title);font-stretch:80%;letter-spacing:.06em}
+.sync small{font-size:.7rem}
+.hero-side{display:grid;gap:1.2rem;color:var(--dim)}
+.hero-side p{font-size:1.15rem;text-wrap:pretty}
+.hero-side strong{color:var(--text);font-weight:600}
+.ctas{display:flex;flex-wrap:wrap;gap:.7rem;margin-top:.4rem}
+.meta{display:flex;flex-wrap:wrap;gap:.3rem 1.4rem;font:400 .85rem/1.4 var(--mono);color:var(--faint)}
+.meta b{color:var(--amber);font-weight:700}
+
+/* deck screenshot */
+.deck{margin-top:clamp(2.5rem,6vw,4rem);position:relative}
+.frame{position:relative;border:1px solid var(--line-2);background:var(--bg-2);padding:clamp(6px,1.2vw,12px)}
+.frame::before,.frame::after{content:"";position:absolute;width:22px;height:22px;border:2px solid var(--orange)}
+.frame::before{top:-2px;left:-2px;border-right:0;border-bottom:0}
+.frame::after{bottom:-2px;right:-2px;border-left:0;border-top:0}
+.deck .cap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:.4rem 1rem;margin-top:.9rem}
+.deck .cap p{font-size:.88rem;color:var(--faint);max-width:52rem}
+
+/* sections */
+.sec{padding-top:clamp(5rem,12vw,8.5rem)}
+.sec-head{display:grid;gap:1rem;margin-bottom:2.6rem}
+@media (min-width:900px){.sec-head{grid-template-columns:1fr 1fr;gap:3rem;align-items:end}}
+.sec h2{font:900 clamp(2.4rem,7vw,4.8rem)/.9 var(--title);font-stretch:74%;text-transform:uppercase;text-wrap:balance}
+.sec h2 .label{display:block;margin-bottom:.8rem;color:var(--orange);font-size:.85rem}
+.sec-head p{color:var(--dim);max-width:34rem;text-wrap:pretty}
+
+/* sources -> page diagram */
+.flow{display:grid;gap:1.2rem;align-items:center}
+@media (min-width:1000px){.flow{grid-template-columns:1fr auto 1fr auto 1fr;gap:1.2rem}}
+.srcs{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.srcs li{border:1px solid var(--line);background:var(--panel);padding:.75rem .8rem;display:grid;gap:.1rem}
+.srcs b{font:700 1rem/1.2 var(--label);letter-spacing:.1em;text-transform:uppercase}
+.srcs span{font-size:.82rem;color:var(--faint)}
+.arrow{justify-self:center;color:var(--orange)}
+.arrow svg{width:46px;height:46px;fill:none;stroke:currentColor;stroke-width:1.6;transform:rotate(90deg)}
+@media (min-width:1000px){.arrow svg{transform:none}}
+.node{border:1px solid var(--line-2);background:var(--panel);padding:1.2rem 1.2rem 1.3rem;display:grid;gap:.5rem}
+.node h3{font:900 1.7rem/1 var(--title);font-stretch:78%;text-transform:uppercase}
+.node p{color:var(--dim);font-size:.95rem}
+.node.reader{border-color:var(--purple)}
+.node.reader h3{color:var(--purple-2)}
+.node.page{border-color:var(--orange)}
+.node.page h3{color:var(--orange)}
+.node .chip{justify-self:start;font:700 .78rem/1 var(--mono);padding:.35rem .5rem;border:1px solid currentColor}
+.node.reader .chip{color:var(--purple-2)} .node.page .chip{color:var(--green)}
+
+/* rules */
+.rules{display:grid;gap:0;border-top:1px solid var(--line-2)}
+@media (min-width:760px){.rules{grid-template-columns:1fr 1fr}}
+@media (min-width:1100px){.rules{grid-template-columns:repeat(4,1fr)}}
+.rules li{padding:1.4rem 1.2rem 1.5rem 0;border-bottom:1px solid var(--line);display:grid;gap:.55rem;align-content:start}
+@media (min-width:760px){.rules li{padding-left:1.2rem;border-left:1px solid var(--line)}}
+.rules .id{font:700 .85rem/1 var(--mono);color:var(--red);display:flex;align-items:center;gap:.5rem}
+.rules .id::before{content:"";width:.55rem;height:.55rem;background:var(--red);transform:rotate(45deg)}
+.rules h3{font:600 1.15rem/1.3 var(--ui);color:var(--text)}
+.rules p{color:var(--faint);font-size:.92rem}
+.rules li.sum{background:var(--panel)}
+.rules li.sum h3{font:900 1.6rem/1 var(--title);font-stretch:78%;text-transform:uppercase;color:var(--orange)}
+
+/* split screenshot */
+.split{display:grid;gap:2rem;align-items:start}
+@media (min-width:1000px){.split{grid-template-columns:1.35fr .65fr;gap:3rem}}
+.notes{display:grid;gap:1.5rem}
+.notes div{border-top:1px solid var(--line-2);padding-top:1rem}
+.notes h3{font:700 1.15rem/1.2 var(--label);letter-spacing:.1em;text-transform:uppercase;margin-bottom:.4rem}
+.notes p{color:var(--dim);font-size:.97rem}
+.phone{max-width:300px;margin-inline:auto;border:1px solid var(--line-2);border-radius:28px;padding:10px;background:var(--bg-2)}
+.phone img{border-radius:20px}
+
+/* agents */
+.agents .frame{margin-top:0}
+
+/* modes */
+.modes{display:grid;gap:1rem}
+@media (min-width:860px){.modes{grid-template-columns:1fr 1fr}}
+.mode{border:1px solid var(--line-2);padding:1.5rem;display:grid;gap:.8rem;align-content:start;background:var(--panel)}
+.mode h3{font:900 2rem/1 var(--title);font-stretch:78%;text-transform:uppercase}
+.mode.review{border-top:3px solid var(--orange)} .mode.review h3{color:var(--orange)}
+.mode.auto{border-top:3px solid var(--line-2)}
+.mode p{color:var(--dim)}
+.mode ul{display:grid;gap:.45rem;font-size:.95rem;color:var(--dim)}
+.mode li{padding-left:1.2rem;position:relative}
+.mode li::before{content:"";position:absolute;left:0;top:.6em;width:.5rem;height:2px;background:var(--faint)}
+.always{margin-top:1rem;border:1px solid var(--red);padding:1rem 1.2rem;display:flex;gap:1rem;align-items:center}
+.always .jp{font-size:1.6rem;color:var(--red);font-weight:900}
+.always p{color:var(--text)}
+
+/* guard list */
+.guard{display:grid;gap:0;border-top:1px solid var(--line-2)}
+.guard li{display:grid;gap:.4rem;padding:1.2rem 0;border-bottom:1px solid var(--line)}
+@media (min-width:860px){.guard li{grid-template-columns:20rem 1fr;gap:2rem}}
+.guard h3{font:700 1.2rem/1.25 var(--label);letter-spacing:.08em;text-transform:uppercase}
+.guard p{color:var(--dim);max-width:44rem}
+
+/* numbers */
+.nums{display:grid;grid-template-columns:repeat(2,1fr);border-top:1px solid var(--line-2)}
+@media (min-width:900px){.nums{grid-template-columns:repeat(5,1fr)}}
+.nums div{padding:1.4rem 1rem 1.5rem 0;border-bottom:1px solid var(--line)}
+.nums dt{font:900 clamp(3rem,9vw,5.6rem)/.85 var(--title);font-stretch:70%;font-variant-numeric:lining-nums}
+.nums div:nth-child(1) dt{color:var(--orange)}
+.nums dd{margin-top:.6rem;font-size:.9rem;color:var(--dim);max-width:16rem}
+
+/* setup */
+.setup{display:grid;gap:2rem}
+@media (min-width:1000px){.setup{grid-template-columns:1fr 1fr;gap:3rem}}
+.needs{border-top:1px solid var(--line-2)}
+.needs li{padding:1rem 0;border-bottom:1px solid var(--line);display:grid;gap:.15rem}
+.needs b{font:700 1.05rem/1.3 var(--label);letter-spacing:.08em;text-transform:uppercase}
+.needs span{color:var(--dim);font-size:.95rem}
+.agentbox{border:1px solid var(--orange);background:linear-gradient(180deg,rgb(255 106 19 / .08),transparent 60%);padding:clamp(1.4rem,4vw,2.2rem);display:grid;gap:1.1rem;align-content:start}
+.agentbox h3{font:900 clamp(2rem,5vw,2.8rem)/.9 var(--title);font-stretch:74%;text-transform:uppercase}
+.agentbox p{color:var(--dim)}
+.agentbox pre{margin:0;background:var(--bg);border:1px solid var(--line);padding:1rem;font:400 .82rem/1.7 var(--mono);color:var(--dim);white-space:pre-wrap}
+.agentbox pre i{font-style:normal;color:var(--orange)}
+.onreq{margin-top:1rem;font:400 .85rem/1.4 var(--mono);color:var(--faint)}
+
+/* faq */
+.faq{border-top:1px solid var(--line-2)}
+.faq details{border-bottom:1px solid var(--line)}
+.faq summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:1rem;min-height:60px;padding:.6rem 0;font:600 1.1rem/1.3 var(--ui)}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font:700 1.4rem/1 var(--mono);color:var(--orange);transition:transform .3s var(--ease)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{padding-bottom:1.2rem;color:var(--dim);max-width:46rem}
+
+.closing{padding-block:clamp(6rem,14vw,10rem) clamp(3rem,8vw,5rem);text-align:center;display:grid;justify-items:center;gap:1.6rem}
+.closing img{width:72px;height:auto}
+.closing h2{font:900 clamp(2.8rem,10vw,7rem)/.86 var(--title);font-stretch:70%;text-transform:uppercase}
+.closing h2 em{font-style:normal;color:var(--orange)}
+footer{border-top:1px solid var(--line);padding-block:1.6rem 2.4rem;font:400 .82rem/1.5 var(--mono);color:var(--faint)}
+footer .wrap{display:flex;flex-wrap:wrap;gap:.6rem 1.4rem}
+footer .who{margin-right:auto}
+footer a{color:var(--dim)}
+
+@keyframes boot{0%{opacity:0;clip-path:inset(0 0 100% 0)}100%{opacity:1;clip-path:inset(0 0 0 0)}}
+@keyframes blink{50%{opacity:.35}}
+.hero h1{animation:boot .9s var(--ease) both}
+.deck .frame{animation:boot 1.2s .2s var(--ease) both}
+.sync{animation:blink 2.4s steps(1) infinite}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+.ag{max-width:54rem}.ag h1{font:900 clamp(2.6rem,9vw,5.4rem)/.88 var(--title);font-stretch:72%;text-transform:uppercase;margin-top:clamp(2.5rem,7vw,4.5rem);text-wrap:balance}.ag h1 em{font-style:normal;color:var(--orange)}.ag-sub{margin-top:1.3rem;font-size:1.12rem;color:var(--dim)}.ag-chips{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1.4rem}.ag-chips span{border:1px solid var(--line-2);padding:.35rem .7rem;font:600 .82rem/1 var(--label);letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}.ag-block{padding-top:clamp(3rem,8vw,4.5rem)}.ag-block h2{font:900 clamp(2rem,6vw,3rem)/.9 var(--title);font-stretch:74%;text-transform:uppercase;margin-bottom:1rem}.ag-block>p{color:var(--dim)}.ag-prompt{margin-top:1.2rem;border:1px solid var(--line-2)}.ag-bar{display:flex;justify-content:space-between;align-items:center;gap:1rem;padding:.5rem .5rem .5rem 1rem;background:var(--panel);font:400 .82rem var(--mono);color:var(--faint)}.ag-copy{min-height:40px;padding:0 1rem;border:0;background:var(--orange);color:#120700;font:700 .95rem/1 var(--label);letter-spacing:.1em;text-transform:uppercase;cursor:pointer}.ag-prompt pre{margin:0;padding:1.1rem 1.2rem;max-height:26rem;overflow:auto;font:400 .8rem/1.65 var(--mono);color:var(--dim);white-space:pre-wrap;background:var(--bg)}.ag-steps{counter-reset:s;border-top:1px solid var(--line-2)}.ag-steps li{counter-increment:s;display:grid;grid-template-columns:2.6rem 1fr;gap:1rem;padding:1rem 0;border-bottom:1px solid var(--line);color:var(--dim)}.ag-steps li::before{content:counter(s,decimal-leading-zero);font:700 .9rem/1.6 var(--mono);color:var(--orange)}.ag-steps b{color:var(--text)}.ag-asks{display:grid;gap:.8rem}@media (min-width:700px){.ag-asks{grid-template-columns:1fr 1fr}}.ag-asks div{border:1px solid var(--line);background:var(--panel);padding:1.1rem 1.2rem}.ag-asks h3{font:700 1.05rem/1.25 var(--label);letter-spacing:.08em;text-transform:uppercase;margin-bottom:.3rem}.ag-asks p{color:var(--dim);font-size:.95rem}.ag-notes{display:grid;gap:.8rem}.ag-notes li{padding-left:1.5rem;position:relative;color:var(--dim)}.ag-notes li::before{content:"";position:absolute;left:0;top:.55em;width:.55rem;height:.55rem;background:var(--red);transform:rotate(45deg)}.ag-notes b{color:var(--text)}.ag-after{display:grid;gap:.6rem;margin-top:1rem}.ag-after code{border:1px solid var(--line);background:var(--panel);padding:.5rem .8rem;font:400 .86rem var(--mono);color:var(--text)}.ag-req{margin-top:clamp(3rem,8vw,4.5rem);border:1px solid var(--orange);padding:1.1rem 1.3rem;font:400 .9rem var(--mono)}.navhome{margin-left:auto;min-height:40px}@media (min-width:860px){.navhome{margin-left:1.5rem}}</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to content</a>
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="./"><img src="icon.svg" alt="" width="22" height="29"><b>LILITH</b></a>
+    <nav class="nav-links" aria-label="Pages"><a href="./">Home</a><a href="./#setup">What setup needs</a><a href="llms.txt">llms.txt</a></nav>
+    <a class="btn btn-ghost navhome" href="./">Home</a>
+  </div>
+</header>
+<main id="main" class="wrap ag">
+  <h1>Let your coding agent <em>set up Lilith.</em></h1>
+  <p class="ag-sub">If you use Claude Code, paste the prompt below into it. It checks your machine, runs Lilith&#x27;s own tests, shows you the install plan before it runs, and helps you write the two config files. You turn polling on yourself.</p>
+  <div class="ag-chips"><span>Claude Code</span><span>Linux + systemd</span><span>Node.js 26+</span><span>your own logins</span></div>
+  <section class="ag-block" aria-labelledby="ag-p"><h2 id="ag-p">The prompt</h2>
+    <p>Copy it whole. It is also at <a href="agent-setup-prompt.md">agent-setup-prompt.md</a> as plain text, so an agent can fetch it directly.</p>
+    <div class="ag-prompt"><div class="ag-bar"><span>agent-setup-prompt.md</span><button class="ag-copy" type="button" data-copy>Copy prompt</button></div><pre id="prompt-text">Set up Lilith, a local chief-of-staff dashboard built on Claude Code, on this computer. Do as much as you can yourself and ask me only for the things you cannot do.
+
+&lt;context&gt;
+Lilith is a personal service. It polls my work sources (a task board, chat, email, meeting notes, calendar and my running Claude Code sessions), sorts every item by client, and shows one local web page that answers &quot;what needs me now?&quot;. It was built for one Linux laptop, so expect to adapt it. I received the Lilith folder from its author; it is not downloaded from anywhere. The folder&#x27;s README describes installation and configuration; read it first and follow it. Where it and this prompt disagree, the README wins.
+
+What Lilith needs:
+- Linux with systemd user services.
+- Node.js 26 or later (it runs its TypeScript sources directly, no build step).
+- Claude Code, logged in with my own account. Lilith calls it as its only reader of raw text.
+- Optional sources, each with my own login: a chat tool, an email tool, a task board client, and meeting-notes and calendar connectors. Any of them can stay off.
+- Two config files: one for my names and sources, one for my clients and the words that identify them.
+&lt;/context&gt;
+
+&lt;steps&gt;
+1. Ask me where the Lilith folder is. Confirm it is the right folder by finding its README and test suite. Do not edit anything in it yet.
+2. Check this machine: Linux, systemd user services, Node.js version, Claude Code login. Tell me in one short list what is missing.
+3. Install the dependencies and run the project&#x27;s own checks (typecheck and tests). Report the result. Stop if tests fail.
+4. Run the installer in its dry-run mode first and show me exactly what it would create or change. Run it for real only after I say yes.
+5. Help me fill in the two config files: my names and addresses, which sources to turn on, and my clients with their match words. Ask me for each value. Never put a token, password or API key in these files; each source uses its own tool&#x27;s login.
+6. Start the service. Leave polling off. Tell me how to open the page and that I press On when I am ready.
+7. Report what you installed, what the checks said, which sources are on, and anything still open.
+&lt;/steps&gt;
+
+&lt;rules&gt;
+- Do not turn polling on, send any message, or enable backups or alerts. I do those myself.
+- Never read, print or copy any credential file of the source tools.
+- If a step fails twice, stop and tell me what you saw instead of trying other routes.
+&lt;/rules&gt;
+</pre></div>
+  </section>
+  <section class="ag-block" aria-labelledby="ag-d"><h2 id="ag-d">What the agent does</h2>
+    <ol class="ag-steps"><li><span>Asks where the Lilith folder is and checks it, without editing anything.</span></li><li><span>Checks Linux, systemd user services, Node.js and your Claude Code login, and lists what is missing.</span></li><li><span>Installs dependencies and runs the project's typecheck and tests. Stops if they fail.</span></li><li><span>Shows the installer's dry run, then installs only after your yes.</span></li><li><span>Fills in your sources and clients with you, one value at a time. No keys go into these files.</span></li><li><span>Starts the service with polling <b>off</b>, and tells you how to open the page.</span></li><li><span>Reports what it installed, which sources are on, and anything still open.</span></li></ol>
+  </section>
+  <section class="ag-block" aria-labelledby="ag-a"><h2 id="ag-a">What it will ask you</h2>
+    <div class="ag-asks"><div><h3>Where the folder is</h3><p>The Lilith folder you were given.</p></div><div><h3>Yes to the install plan</h3><p>After it shows you the dry run.</p></div><div><h3>Your names and sources</h3><p>Which tools to watch, and the addresses and handles that mean you.</p></div><div><h3>Your clients</h3><p>Their names, sub-clients and the words that identify them.</p></div></div>
+  </section>
+  <section class="ag-block" aria-labelledby="ag-s"><h2 id="ag-s">Safety notes</h2>
+    <ul class="ag-notes"><li><b>Polling stays off.</b> You press On in the page when you are ready.</li><li><b>Nothing is sent.</b> The agent sends no messages and turns on no alerts or backups.</li><li><b>No credentials in config.</b> Each source keeps its own login. The agent never reads their credential files.</li><li><b>Dry run first.</b> The installer shows what it would change before it changes anything.</li><li><b>Read the prompt before you paste it.</b> It is plain text and runs nothing you cannot see.</li></ul>
+  </section>
+  <section class="ag-block" aria-labelledby="ag-f"><h2 id="ag-f">After setup</h2><p>Ask in plain words. A few examples:</p>
+    <div class="ag-after"><code>Open Lilith and press On.</code><code>What needs me now?</code><code>Show only mine.</code></div>
+  </section>
+  <p class="ag-req">Source available on request.</p>
+</main>
+<footer><div class="wrap"><span class="who">Lilith · built by Shinzuu · source available on request</span><a href="./">Home</a><a href="agent-setup-prompt.md">Prompt as plain text</a><a href="llms.txt">llms.txt</a></div></footer>
+
+<script>
+document.querySelector("[data-copy]").addEventListener("click",function(ev){var b=ev.currentTarget,el=document.getElementById("prompt-text"),t=el.textContent;
+(navigator.clipboard?navigator.clipboard.writeText(t):Promise.reject()).then(function(){b.textContent="Copied"},function(){var r=document.createRange();r.selectNodeContents(el);var s=getSelection();s.removeAllRanges();s.addRange(r);b.textContent="Selected, press Ctrl+C"});setTimeout(function(){b.textContent="Copy prompt"},2400)});
+</script>
+</body>
+</html>

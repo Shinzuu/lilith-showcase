@@ -1,0 +1,18 @@
+# Lilith
+
+> Lilith is a local chief-of-staff dashboard built on Claude Code, made by Shinzuu. It runs as a systemd user service on Linux, polls the user's task board, chat, email, meeting notes, calendar and running Claude Code sessions, files every item under its client, and shows one local web page answering "what needs me now?". Seven deterministic rules pick urgent items; a Claude Code reader with every tool disabled is the only part that sees raw text. In Review mode its own actions wait for approval. The source is not public; it is available from the author on request.
+
+Counted from the code: 6 sources, 7 "needs me now" rules, 0 tools for the raw-text reader, at most 2 reader processes capped at 1.5 GB, 545 automated tests.
+
+## Install with an agent
+
+- [Agent setup page](https://shinzuu.github.io/lilith-showcase/agent-setup.html): what the setup prompt does, what the agent asks the human, and safety notes
+- [Agent setup prompt (raw)](https://shinzuu.github.io/lilith-showcase/agent-setup-prompt.md): paste into Claude Code; it checks the machine, runs the tests, shows the install dry run, helps fill in the config, and starts the service with polling off
+
+## Docs
+
+- [Website](https://shinzuu.github.io/lilith-showcase/): overview with screenshots of the real interface on invented demo data
+
+## Optional
+
+- Source code: available on request from the author
